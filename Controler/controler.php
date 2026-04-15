@@ -33,10 +33,10 @@ class UserController {
             echo "Error: Las contraseñas no coinciden.";
         } else {
             if ($this->rol === "Cliente") {
-                header("Location: ../View/Cliente.html");
+                header("Location: ../View/Index_Cliente.html");
                 exit();
             } else if ($this->rol === "Promotor") {
-                header("Location: ../View/Promotor.html");
+                header("Location: ../View/Index_Promotor.html");
                 exit();
             } else {
                 echo "Error: En cargar la pagina";

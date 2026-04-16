@@ -87,8 +87,6 @@ $conexion->close();
 
 //Update los datos de la tabla User 
 
-$conexion = new mysqli("localhost", "root", "", "mi_base_datos");
-
 $sql = "UPDATE usuarios SET nombre = ?, email = ? WHERE id = ?";
 $stmt = $conexion->prepare($sql);
 

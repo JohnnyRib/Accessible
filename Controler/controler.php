@@ -55,7 +55,7 @@ class UserController
         $this->pass = $_POST['password'];
         $this->pass2 = $_POST['repeat-password'];
         $this->rol = $_POST['role'];
-        
+
         // if ($this->pass !== $this->pass2) {
         //     echo "Error: Las contraseñas no coinciden.";
         // } else {
@@ -77,7 +77,7 @@ class UserController
         $sql = "INSERT INTO User (email) VALUE (?)";
         $stmt = $this->conexion->prepare($sql);
 
-        
+
 
         $stmt->bind_param("s", $this->email);
 
@@ -110,6 +110,33 @@ class UserController
         } else {
             echo "Usuario o rol no existe";
         }
+
+
+
+        // Ejecutar consulta
+        $sql = "SELECT  email FROM User WHERE email = ?";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->bind_param("s", $this->email);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+
+        // Verificar si hay resultados
+        if ($resultado->num_rows > 0) {
+            // Recorrer resultados
+            while ($fila = $resultado->fetch_assoc()) {
+                echo "ID: " . $fila['id'] . " - ";
+                echo "Nombre: " . $fila['nombre'] . " - ";
+                echo "Email: " . $fila['email'] . "<br>";
+            }
+        } else {
+            echo "No se encontraron resultados";
+        }
+
+        // Liberar resultado
+        $resultado->free();
+        $stmt->close();
+        $this->conexion->close();
+
     }
 
     public function logout()

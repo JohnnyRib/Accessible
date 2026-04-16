@@ -12,8 +12,10 @@ check (char_length(password) > 8),
 role boolean
 );
 
+
+
 create table Events (
-id int primary key primary key auto_increment,
+id int primary key auto_increment,
 Titulo varchar(100) not null,
 Categoria varchar(50) not null,
 fecha date not null,

@@ -9,6 +9,8 @@ username varchar(50) not null,
 age int not null,
 password varchar(50) not null,
 check (char_length(password) > 8), 
+repeat_password varchar(50) not null,
+check (password = repeat_password),
 role boolean
 );
 

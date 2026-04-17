@@ -96,7 +96,6 @@ class UserController
             $_SESSION['user_email'] = $fila['email'];
             $_SESSION['user_role'] = $fila['role'];
 
-            // Redirección basada en el rol seleccionado en el formulario
             if ($this->rol === "Cliente") {
                 header("Location: ../View/Index_Cliente.html");
                 exit();

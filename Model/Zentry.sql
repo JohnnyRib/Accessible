@@ -6,7 +6,6 @@ DROP USER IF EXISTS 'app_web'@'localhost';
 create database Zentry;
 use Zentry;
 
-drop table User;
 create table User (
 id int primary key auto_increment, 
 email varchar(200) not null,
@@ -24,5 +23,3 @@ GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP ON Zentry.* TO 'Zentry
 
 CREATE USER 'app_web'@'localhost' IDENTIFIED BY '1234!';
 GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP ON Zentry.* TO 'app_web'@'localhost';
-
-FLUSH PRIVILEGES;

@@ -74,12 +74,12 @@ class UserController
         // insert sql
         // INSERT con prepared statement
         // $sql = "INSERT INTO User (email, username, age, password, role) VALUE (?, ?, ?, ?, ?)";
-        $sql = "INSERT INTO User (email, username, age, password, repeat_password, role) VALUE (?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO User (email, username, password, repeat_password, role) VALUE (?, ?, ?, ?, ?)";
         $stmt = $this->conexion->prepare($sql);
 
 
 
-        $stmt->bind_param("s", $this->email);
+        $stmt->bind_param("ssss", $this->email, $this->usuario, $this->pass, $this->pass2, $this->rol);
 
         if ($stmt->execute()) {
             echo "Registro insertado correctamente<br>";

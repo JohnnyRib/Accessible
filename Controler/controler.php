@@ -28,8 +28,8 @@ class UserController
     {
 
         $host = "localhost";
-        $usuario = "root";
-        $password = "";
+        $usuario = "Zentry_team";
+        $password = "Zentry687";
         $base_datos = "Zentry";
 
         // Crear conexión

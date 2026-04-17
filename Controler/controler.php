@@ -79,7 +79,7 @@ class UserController
 
 
 
-        $stmt->bind_param("ssss", $this->email, $this->usuario, $this->pass, $this->pass2, $this->rol);
+        $stmt->bind_param("sssss", $this->email, $this->usuario, $this->pass, $this->pass2, $this->rol);
 
         if ($stmt->execute()) {
             echo "Registro insertado correctamente<br>";

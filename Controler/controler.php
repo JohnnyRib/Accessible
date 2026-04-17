@@ -56,7 +56,7 @@ class UserController
         $this->pass2 = $_POST['repeat-password'];
         $this->rol = $_POST['role'];
 
-    
+
         $this->rol = ($_POST['role'] === "Promotor") ? 1 : 0;
         $sql = "INSERT INTO User (email, username, password, repeat_password, role) VALUE (?, ?, ?, ?, ?)";
         $stmt = $this->conexion->prepare($sql);
@@ -85,42 +85,33 @@ class UserController
         $this->pass = $_POST['password'];
         $this->rol = $_POST['role'];
 
-        if ($this->rol === "Cliente") {
-            header("Location: ../View/Index_Cliente.html");
-            exit();
-        } else if ($this->rol === "Promotor") {
-            header("Location: ../View/Index_Promotor.html");
-            exit();
-        } else {
-            echo "Usuario o rol no existe";
-        }
-
-
-
-        // Ejecutar consulta
-        $sql = "SELECT  email FROM User WHERE email = ?";
+        $sql = "SELECT email, password, role FROM User WHERE email = ?";
         $stmt = $this->conexion->prepare($sql);
-        $stmt->bind_param("s", $this->email);
+        $stmt->bind_param("s", $this->usuario);
         $stmt->execute();
         $resultado = $stmt->get_result();
 
-        // Verificar si hay resultados
-        if ($resultado->num_rows > 0) {
-            // Recorrer resultados
-            while ($fila = $resultado->fetch_assoc()) {
-                echo "ID: " . $fila['id'] . " - ";
-                echo "Nombre: " . $fila['nombre'] . " - ";
-                echo "Email: " . $fila['email'] . "<br>";
+        if ($fila = $resultado->fetch_assoc()) {
+            if ($this->pass === $fila['password']) {
+                $_SESSION['user_email'] = $fila['email'];
+                $_SESSION['user_role'] = $fila['role'];
+
+                if ($this->rol === "Cliente") {
+                    header("Location: ../View/Index_Cliente.html");
+                    exit();
+                } else if ($this->rol === "Promotor") {
+                    header("Location: ../View/Index_Promotor.html");
+                    exit();
+                }
+            } else {
+                echo "Error: Contraseña incorrecta.";
             }
         } else {
-            echo "No se encontraron resultados";
+            echo "Error: Usuario no encontrado.";
         }
 
-        // Liberar resultado
-        $resultado->free();
         $stmt->close();
         $this->conexion->close();
-
     }
 
     public function logout()

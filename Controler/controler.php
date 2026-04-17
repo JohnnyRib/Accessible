@@ -80,39 +80,40 @@ class UserController
     }
 
     public function login()
-    {
-        $this->usuario = $_POST['usuario'];
-        $this->pass = $_POST['password'];
-        $this->rol = $_POST['role'];
+{
+    $this->usuario = $_POST['usuario'];
+    $this->pass = $_POST['password'];
+    $this->rol = $_POST['role'];
 
-        $sql = "SELECT email, password, role FROM User WHERE email = ?";
-        $stmt = $this->conexion->prepare($sql);
-        $stmt->bind_param("s", $this->usuario);
-        $stmt->execute();
-        $resultado = $stmt->get_result();
+    $sql = "SELECT email, password, role FROM User WHERE email = ?";
+    $stmt = $this->conexion->prepare($sql);
+    $stmt->bind_param("s", $this->usuario);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
 
-        if ($fila = $resultado->fetch_assoc()) {
-            if ($this->pass === $fila['password']) {
-                $_SESSION['user_email'] = $fila['email'];
-                $_SESSION['user_role'] = $fila['role'];
+    if ($fila = $resultado->fetch_assoc()) {
+        if ($this->pass === $fila['password']) {
+            $_SESSION['user_email'] = $fila['email'];
+            $_SESSION['user_role'] = $fila['role'];
 
-                if ($this->rol === "Cliente") {
-                    header("Location: ../View/Index_Cliente.html");
-                    exit();
-                } else if ($this->rol === "Promotor") {
-                    header("Location: ../View/Index_Promotor.html");
-                    exit();
-                }
-            } else {
-                echo "Error: Contraseña incorrecta.";
+            // Redirección basada en el rol seleccionado en el formulario
+            if ($this->rol === "Cliente") {
+                header("Location: ../View/Index_Cliente.html");
+                exit();
+            } else if ($this->rol === "Promotor") {
+                header("Location: ../View/Index_Promotor.html");
+                exit();
             }
         } else {
-            echo "Error: Usuario no encontrado.";
+            echo "Error: Contraseña incorrecta.";
         }
-
-        $stmt->close();
-        $this->conexion->close();
+    } else {
+        echo "Error: Usuario no encontrado.";
     }
+
+    $stmt->close();
+    $this->conexion->close();
+}
 
     public function logout()
     {

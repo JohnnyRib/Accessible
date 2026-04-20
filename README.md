@@ -1,69 +1,187 @@
-# Zentry
+# Zentry - Event Management Platform
 
-## 1. Nombre del proyecto
-Zentry
+Zentry is a web application for managing and discovering events. It provides functionality for both regular users (Clientes) and event promoters (Promotores) to interact with events.
 
-## 2. Descripción general
-Zentry es una aplicación web académica para la gestión de acceso a una plataforma de eventos. Combina interfaces HTML/CSS con un backend PHP/MySQL y ofrece un flujo básico de registro y autenticación.
+## Project Structure
 
-## 3. Objetivo de la aplicación
-El objetivo es permitir que usuarios y promotores accedan a una plataforma de eventos con roles diferenciados, facilitando el manejo de cuentas y la navegación entre páginas de eventos.
+```
+Zentry/
+├── Model/
+│   ├── baseDatos.php        # Database connection and CRUD operations
+│   └── baseDatos.sql        # Database schema
+├── Controler/
+│   └── controler.php        # User controller (login, registration, logout)
+└── View/
+    ├── index.html           # Home page
+    ├── login.html           # Login page
+    ├── registro-usuario.html # User registration
+    ├── registro-promotor.html# Promoter registration
+    ├── Index_Cliente.html    # Client dashboard
+    ├── Index_Promotor.html   # Promoter dashboard
+    ├── crear-evento.html     # Create event page
+    ├── listado-evento.html   # Event listing
+    ├── buscar-evento.html    # Event search
+    ├── detalle-evento.html   # Event details
+    ├── perfil-usuario.html   # User profile
+    └── styles.css            # Styling
+```
 
-## 4. Funcionalidades principales
-- Registro de usuarios y promotores.
-- Inicio de sesión mediante correo electrónico y contraseña.
-- Redirección según rol: Cliente o Promotor.
-- Navegación de eventos: búsqueda, listado y detalle.
-- Páginas de perfil para cada tipo de usuario.
-- Estructura de páginas accesibles con navegación clara.
+## Class Diagram
 
-## 5. Tecnologías utilizadas
-- HTML
-- CSS
-- PHP
-- MySQL
-- XAMPP (Servidor Apache y base de datos)
+The following diagram shows the main class structure of the application:
 
-## 6. Estructura del proyecto
-- `Controler/controler.php` — lógica de registro, login y logout.
-- `Model/Zentry.sql` — esquema de base de datos.
-- `View/` — frontend de la aplicación:
-  - `index.html`
-  - `login.html`
-  - `registro-usuario.html`
-  - `registro-promotor.html`
-  - `Index_Cliente.html`
-  - `Index_Promotor.html`
-  - `buscar-evento.html`
-  - `listado-evento.html`
-  - `detalle-evento.html`
-  - `detalle-evento-tech.html`
-  - `perfil-usuario.html`
-  - `styles.css`
+```mermaid
+classDiagram
+    class UserController {
+        +string email
+        +string usuario
+        +string pass
+        +string pass2
+        +string rol
+        +mysqli conexion
+        
+        +__construct()
+        +registro() void
+        +login() void
+        +logout() void
+    }
+    
+    class DatabaseManager {
+        -string host
+        -string usuario
+        -string password
+        -string base_datos
+        -mysqli conexion
+        
+        +conectar() mysqli
+        +insertUser() bool
+        +updateUser() bool
+        +deleteUser() bool
+        +getUserById() array
+    }
+    
+    UserController --> DatabaseManager: uses
+    
+    class User {
+        +int id
+        +string email
+        +string username
+        +int age
+        +string password
+        +string role
+    }
+    
+    DatabaseManager --> User: manages
+```
 
-## 7. Cómo ejecutar el proyecto en XAMPP
-1. Copie la carpeta del proyecto dentro de `xampp/htdocs`.
-2. Inicie Apache y MySQL desde el panel de XAMPP.
-3. En phpMyAdmin, importe el archivo `Model/Zentry.sql` para crear la base de datos y las tablas.
-4. Verifique las credenciales de conexión en `Controler/controler.php`.
-5. Abra en el navegador la ruta al archivo `View/index.html`.
+## Sequence Diagram - User Registration Flow
 
-> Ejemplo: `http://localhost/mywebs/Proyecto%20transversal/Accessible/View/index.html`
+The following diagram shows the sequence of events during user registration:
 
-## 8. Cómo usar la aplicación
-1. Abra `login.html` para iniciar sesión.
-2. Si no tiene cuenta, use `registro-usuario.html` o `registro-promotor.html`.
-3. Complete los formularios y envíelos al backend.
-4. Tras la autenticación, la aplicación redirige según el rol seleccionado.
-5. Navegue por las páginas de eventos y perfil desde el menú.
+```mermaid
+sequenceDiagram
+    participant User as User/Browser
+    participant Controller as UserController
+    participant DB as Database
+    participant View as View (HTML)
+    
+    User->>View: Fill registration form
+    View->>User: Submit form (POST)
+    User->>Controller: Send registration data
+    Controller->>Controller: Extract email, username, password, role
+    
+    alt Password Validation
+        Controller->>Controller: Validate passwords match
+        Note over Controller: (Currently commented out)
+    end
+    
+    Controller->>DB: Prepare INSERT statement
+    DB-->>Controller: Statement prepared
+    Controller->>DB: Execute INSERT (email)
+    DB-->>Controller: Return insert_id
+    Controller->>View: Redirect to dashboard
+    View-->>User: Show dashboard (Client or Promoter)
+```
 
-## 9. Casos de uso principales: registro, login y acceso según rol
-- Registro: `registro-usuario.html` y `registro-promotor.html` envían los datos a `Controler/controler.php`.
-- Login: `login.html` valida el correo, la contraseña y el rol contra la base de datos.
-- Acceso según rol: si el rol es `Cliente`, el usuario va a `Index_Cliente.html`; si es `Promotor`, accede a `Index_Promotor.html`.
+## Sequence Diagram - User Login Flow
 
-## 10. Repositorio de GitHub
-Repositorio: [URL del repositorio]
+The following diagram shows the sequence of events during user login:
 
-## 11. Autores
-Autores: [Nombre(s) del autor o del equipo]
+```mermaid
+sequenceDiagram
+    participant User as User/Browser
+    participant View as View (HTML)
+    participant Controller as UserController
+    participant Session as Session Manager
+    
+    User->>View: Enter login credentials
+    View->>User: Submit login form (POST)
+    User->>Controller: Send username, password, role
+    Controller->>Controller: Extract login data
+    
+    alt Role Validation
+        Controller->>Controller: Check role (Cliente or Promotor)
+        
+        opt Role is Cliente
+            Controller->>Session: Store session data
+            Controller->>View: Redirect to Index_Cliente.html
+            View-->>User: Display Client Dashboard
+        end
+        
+        opt Role is Promotor
+            Controller->>Session: Store session data
+            Controller->>View: Redirect to Index_Promotor.html
+            View-->>User: Display Promoter Dashboard
+        end
+        
+        opt Invalid Role
+            Controller-->>User: Show error message
+        end
+    end
+```
+
+## Database Schema
+
+The application uses a MySQL database with the following main table:
+
+### User Table
+| Column   | Type    | Description      |
+|----------|---------|------------------|
+| id       | INT     | Primary Key      |
+| email    | VARCHAR | User email       |
+| username | VARCHAR | Username         |
+| age      | INT     | User age         |
+| password | VARCHAR | Hashed password  |
+| role     | VARCHAR | User role (Cliente/Promotor) |
+
+## Features
+
+- **User Authentication**: Login and registration for both clients and promoters
+- **Event Management**: Create, search, and view events
+- **User Profiles**: Manage user profile information
+- **Role-Based Access**: Different dashboards for clients and promoters
+- **Event Details**: View detailed information about specific events
+
+## Installation
+
+1. Place the project in your XAMPP htdocs folder: `xampp/htdocs/zentryGames/Zentry/`
+2. Create the MySQL database using `baseDatos.sql`
+3. Update database credentials in `baseDatos.php` and `controler.php` if needed
+4. Access the application through your local server: `http://localhost/zentryGames/Zentry/`
+
+## Technologies Used
+
+- **Backend**: PHP 7.x+
+- **Database**: MySQL
+- **Frontend**: HTML5, CSS3
+- **Server**: Apache (XAMPP)
+
+## Future Improvements
+
+- [ ] Implement password hashing (use `password_hash()` and `password_verify()`)
+- [ ] Add input validation and sanitization
+- [ ] Implement proper error handling
+- [ ] Create a service layer for database operations
+- [ ] Add event management functionality
+- [ ] Implement user profile management
+- [ ] Add search and filter capabilities
